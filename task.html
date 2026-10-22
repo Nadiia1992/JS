@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+
+<html lang="uk" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Об'єкти у функціях</title>
+</head>
+
+<body>
+    <script>
+        "use strict";
+
+        function HtmlElement(tagName, isSelfClosing, text)
+        {
+            this.tagName = tagName;
+            this.isSelfClosing = isSelfClosing;
+            this.text = text;
+            this.attributes = [];
+            this.styles = [];
+            this.children = [];
+
+            this.setAttribute = function (name, value) 
+            {
+                this.attributes.push(name + '="' + value + '"');
+            };
+
+            this.setStyles = function (name, value)
+            {
+                this.styles.push(name + ": " + value);
+            };
+
+            this.appendChild = function (element) 
+            {
+                this.children.push(element);
+            };
+
+            this.startChild = function (element) 
+            {
+                this.children.unshift(element);
+            };
+
+            this.getHtml = function ()
+            {
+                let html = "<" + this.tagName;
+
+                for (let i = 0; i < this.attributes.length; i++)
+            {
+                html += " " + this.attributes[i];
+            }
+            
+            if (this.styles.length > 0)
+            {
+                html += ' style="';
+
+                for(let i = 0; i < this.styles.length; i++)
+            {
+                html += this.styles[i] + "; ";
+            }
+
+            html += '"';
+            }
+
+            if (this.isSelfClosing)
+            {
+                html += " />";
+                return html;
+            }
+
+            html += ">";
+            html += this.text;
+
+            for (let i = 0; i < this.children.length; i++)
+            {
+                html += this.children[i].getHtml();
+            }
+            html += "</" + this.tagName + ">";
+
+            return html;
+            };
+        }
+
+        let wrapper = new HtmlElement("div", false, "");
+        wrapper.setAttribute("id", "wrapper");
+        wrapper.setStyles("display", "flex");
+
+        function createBlock() 
+        {
+            let block = new HtmlElement("div", false, "");
+            block.setStyles("width", "500px");
+            block.setStyles("margin", "10px auto");
+            block.setStyles("padding", "20px");
+            block.setStyles("border", "1px solid #000");
+            block.setStyles("border-radius", "5px");
+            block.setStyles("background-color", "#778899");
+
+            let h3 = new HtmlElement("h3", false, "What is Lorem Ipsum?");
+            h3.setStyles("color", "white");
+            h3.setStyles("text-align", "center");
+            h3.setStyles("font-size", "20px");
+            block.appendChild(h3);
+
+            let img = new HtmlElement("img", true, "");
+            img.setAttribute("src", "Lipsum.jpg");
+            img.setAttribute("alt", "Lorem Ipsum");
+            img.setStyles("width", "150px");
+            img.setStyles("float", "right");
+            img.setStyles("margin", "0 0 10px 10px");
+
+            block.appendChild(img);
+
+            let p = new HtmlElement("p", false, "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library in London, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets."
+        );
+        
+        p.setStyles("text-align", "justify");
+        p.setStyles("font-family", "Arial, sans-serif");
+        p.setStyles("font-size", "16px");
+        p.setStyles("line-height", "1.5");
+
+        let a = new HtmlElement("a", false, "More...");
+        a.setAttribute("href", "https://www.lipsum.com/");
+        a.setAttribute("target", "_blank");
+
+        p.appendChild(a);
+        block.appendChild(p);
+
+        return block;
+        }
+
+        wrapper.appendChild(createBlock());
+     
+        document.write(wrapper.getHtml());
+        
+    </script>
+</body>
+
+</html>
